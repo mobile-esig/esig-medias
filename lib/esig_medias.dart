@@ -7,13 +7,17 @@ import 'package:esig_utils/status.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:loading_empty_error/snackbar.dart';
 import 'package:one_context/one_context.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class EsigMedias {
-  Future<void> anexarGaleriaFilePicker(
-      Status status, File? imagemSelecionada, dynamic tratamentoErro) async {
+  Future<void> anexarImagemGaleria(
+    Status status,
+    File imagemSelecionada,
+    dynamic tratamentoErro,
+  ) async {
     status = Status.AGUARDANDO;
     final statusRequest = await Permission.storage.request();
     if (statusRequest.isDenied || statusRequest.isPermanentlyDenied) {
@@ -46,7 +50,46 @@ class EsigMedias {
     }
   }
 
-  converteParaBase64(String? imagePath) async {
+  Future<void> anexarImagemCamera(
+    Status status,
+    File imagemSelecionada,
+    int? imageQuality,
+    ImageSource imageSource,
+    dynamic tratamentoErro,
+  ) async {
+    status = Status.AGUARDANDO;
+    final statusRequest = await Permission.storage.request();
+    if (statusRequest.isDenied || statusRequest.isPermanentlyDenied) {
+      status = Status.ERRO;
+    } else {
+      try {
+        XFile? imagemTemporaria = await ImagePicker().pickImage(
+          source: imageSource,
+          imageQuality: imageQuality ?? 50,
+        );
+        if (imagemTemporaria != null) {
+          imagemSelecionada = File(imagemTemporaria.path);
+          status = await converteParaBase64(imagemSelecionada.path);
+          status = verificaTamanhoArquivo(imagemSelecionada);
+          //Modular.to.pop();
+        } else {
+          status = Status.VAZIO;
+        }
+      } on PlatformException {
+        status = Status.ERRO;
+        getEsigSnackBar(
+          'Erro ao abrir a camera tente novamente',
+          context: OneContext().context,
+          corFundo: Colors.red,
+        );
+      } catch (e) {
+        status = Status.ERRO;
+        tratamentoErro;
+      }
+    }
+  }
+
+  Future<Status> converteParaBase64(String? imagePath) async {
     try {
       File imagefile = File(imagePath!);
       Uint8List imagebytes = await imagefile.readAsBytes();
