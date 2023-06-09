@@ -1,4 +1,4 @@
-library esig_medias;
+library esig_midias;
 
 import 'dart:convert';
 import 'dart:io';
