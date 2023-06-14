@@ -12,7 +12,7 @@ import 'package:loading_empty_error/snackbar.dart';
 import 'package:one_context/one_context.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class EsigMedias {
+class EsigMidias {
   Future<void> anexarImagemGaleria(
     Status status,
     File imagemSelecionada,
