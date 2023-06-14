@@ -15,7 +15,7 @@ import 'package:permission_handler/permission_handler.dart';
 class EsigMidias {
   Future<void> anexarImagemGaleria(
     Status status,
-    File imagemSelecionada,
+    File? imagemSelecionada,
     dynamic tratamentoErro,
   ) async {
     status = Status.AGUARDANDO;
@@ -52,7 +52,7 @@ class EsigMidias {
 
   Future<void> anexarImagemCamera(
     Status status,
-    File imagemSelecionada,
+    File? imagemSelecionada,
     int? imageQuality,
     ImageSource imageSource,
     dynamic tratamentoErro,
